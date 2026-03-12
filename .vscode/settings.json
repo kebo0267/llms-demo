@@ -1,7 +1,8 @@
 {
     "cSpell.words": [
-        "chatbots",
         "chatbot",
+        "chatbots",
+        "dotenv",
         "langchain",
         "ollama",
         "qwen"

@@ -1,7 +1,7 @@
-'''Download the openai/gpt-oss-120b GGUF model from HuggingFace.
+'''Download the ggml-org/gpt-oss-120b-GGUF model from HuggingFace.
 
 Downloads into models/hugging_face (respects $HF_HOME if set).
-Only downloads GGUF files to avoid pulling unnecessary formats.
+Only downloads GGUF files.
 
 Usage:
     python utils/download_gpt_oss_120b.py
@@ -15,8 +15,7 @@ from huggingface_hub import snapshot_download
 load_dotenv()
 
 snapshot_download(
-    repo_id='openai/gpt-oss-120b',
+    repo_id='ggml-org/gpt-oss-120b-GGUF',
     allow_patterns=['*.gguf'],
-    resume_download=True,
     token=os.environ.get('HF_TOKEN'),
 )
