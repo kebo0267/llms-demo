@@ -24,7 +24,7 @@ The dev container is based on the `gperdrizet/deeplearning-gpu` image (NVIDIA GP
 | Step | What it does |
 |------|-------------|
 | `mkdir -p models/hugging_face && mkdir -p models/ollama` | Creates local directories for model storage |
-| `pip install -r requirements.txt` | Installs Python dependencies: **gradio**, **langchain-ollama**, **python-dotenv**, **torch**, **transformers** |
+| `pip install -r requirements.txt` | Installs Python dependencies: **gradio**, **huggingface-hub**, **langchain-ollama**, **openai**, **python-dotenv**, **torch**, **transformers** |
 | `bash .devcontainer/install_ollama.sh` | Downloads and installs the Ollama CLI |
 
 The container also pre-configures the following:
@@ -48,6 +48,40 @@ Once the container is ready you can start running the demos - no extra setup nee
 |------|-------------|-------|
 | `src/ollama_chatbot.py` | Terminal chatbot | Ollama + LangChain |
 | `src/llamacpp_chatbot.py` | Terminal chatbot using a large MoE model | llama.cpp + OpenAI client |
+
+### Running the demos
+
+**Ollama chatbot**:
+```bash
+# 1. Start the Ollama server in a terminal
+ollama serve
+
+# 2. Pull a model (in another terminal)
+ollama pull qwen2.5:3b
+
+# 3. Run the chatbot
+python src/ollama_chatbot.py
+```
+
+**llama.cpp chatbot**:
+```bash
+# 1. Download a GGUF model (e.g., GPT-OSS-120B)
+python utils/download_gpt_oss_120b.py
+
+# 2. Build llama.cpp with CUDA support
+cd llama.cpp
+cmake -B build -DGGML_CUDA=ON
+cmake --build build --config Release -j$(nproc)
+cd ..
+
+# 3. Start the llama-server (see model-specific commands below)
+llama.cpp/build/bin/llama-server -m <model.gguf> <flags...>
+
+# 4. Run the chatbot (in another terminal)
+python src/llamacpp_chatbot.py
+```
+
+> **Note**: The `llamacpp_chatbot.py` script uses environment variables `PERDRIZET_API_KEY` and `PERDRIZET_URL` to connect to the llama-server. For localhost, the defaults work. For remote servers, set these in a `.env` file.
 
 ---
 
@@ -370,6 +404,45 @@ llama.cpp/build/bin/llama-server \
 ```
 
 The model has 36 MoE blocks. `--n-cpu-moe 36` keeps all expert layers on CPU (lowest VRAM, ~5 GB). Reduce the value to move MoE blocks to GPU if you have VRAM to spare.
+
+---
+
+### Model: openai/gpt-oss-20b
+
+The smaller sibling of GPT-OSS-120B, designed for lower latency and local use cases. At ~11 GB it fits entirely in GPU memory on many consumer GPUs no CPU MoE split needed — delivering ~50 tok/s generation. Uses the same [harmony response format](https://github.com/openai/harmony) as the 120B model.
+
+- [Model card (OpenAI)](https://huggingface.co/openai/gpt-oss-20b)
+- [GGUF quantization (ggml-org)](https://huggingface.co/ggml-org/gpt-oss-20b-GGUF)
+
+| Detail | Value |
+|--------|-------|
+| **Parameters** | 21B total, 3.6B active (Mixture-of-Experts) |
+| **Quantization** | mxfp4 (expert layers), BF16 (attention layers) |
+| **Format** | GGUF (single file) |
+| **Download size** | ~11 GB |
+| **Min VRAM** | ~14 GB (fits entirely on GPU) |
+
+```bash
+# Download the GGUF model
+python utils/download_gpt_oss_20b.py
+```
+
+#### Response format: Harmony
+
+Same as GPT-OSS-120B — see [above](#response-format-harmony).
+
+#### Run
+
+```bash
+llama.cpp/build/bin/llama-server \
+    -m models/hugging_face/hub/models--ggml-org--gpt-oss-20b-GGUF/snapshots/*/gpt-oss-20b-mxfp4.gguf \
+    --n-gpu-layers 999 \
+    -c 8192 --flash-attn on \
+    --jinja \
+    --host 0.0.0.0 --port 8502 --api-key "dummy"
+```
+
+No `--n-cpu-moe` needed — the model fits entirely in GPU memory.
 
 ---
 
