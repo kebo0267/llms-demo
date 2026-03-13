@@ -1,5 +1,7 @@
 gradio
+huggingface-hub
 langchain-ollama
+openai
 python-dotenv
 torch
 transformers
