@@ -48,6 +48,7 @@ Once the container is ready you can start running the demos - no extra setup nee
 |------|-------------|-------|
 | `src/ollama_chatbot.py` | Terminal chatbot | Ollama + LangChain |
 | `src/llamacpp_chatbot.py` | Terminal chatbot using a large MoE model | llama.cpp + OpenAI client |
+| `src/gradio_chatbot.py` | Web-based chatbot with Gradio UI | Ollama + LangChain + Gradio |
 
 ### Running the demos
 
@@ -64,6 +65,25 @@ python src/ollama_chatbot.py
 ```
 
 **llama.cpp chatbot**:
+
+You have two choices for this one: use the hosted model at `gpt.perdrizet.org`, or run llama.cpp locally.
+
+**Option 1: Using the remote server (recommended for quick start)**
+
+```bash
+# 1. Create a .env file with your API credentials
+cp .env.example .env
+
+# 2. Edit .env and set:
+#    PERDRIZET_URL=gpt.perdrizet.org
+#    PERDRIZET_API_KEY=your-api-key-here
+
+# 3. Run the chatbot
+python src/llamacpp_chatbot.py
+```
+
+**Option 2: Running llama.cpp locally**
+
 ```bash
 # 1. Download a GGUF model (e.g., GPT-OSS-120B)
 python utils/download_gpt_oss_120b.py
@@ -81,7 +101,21 @@ llama.cpp/build/bin/llama-server -m <model.gguf> <flags...>
 python src/llamacpp_chatbot.py
 ```
 
-> **Note**: The `llamacpp_chatbot.py` script uses environment variables `PERDRIZET_API_KEY` and `PERDRIZET_URL` to connect to the llama-server. For localhost, the defaults work. For remote servers, set these in a `.env` file.
+> **Note**: For localhost, the defaults work automatically (localhost:8502 with "dummy" API key). For remote servers, configure `PERDRIZET_URL` and `PERDRIZET_API_KEY` in your `.env` file.
+
+**Gradio chatbot**:
+```bash
+# 1. Start the Ollama server in a terminal
+ollama serve
+
+# 2. Pull a model (in another terminal)
+ollama pull qwen2.5:3b
+
+# 3. Run the Gradio chatbot
+python src/gradio_chatbot.py
+
+# 4. Open the URL shown in the terminal (usually http://127.0.0.1:7860)
+```
 
 ---
 
