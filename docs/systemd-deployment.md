@@ -85,9 +85,11 @@ sudo cp utils/llamacpp.service /etc/systemd/system/
 sudo nano /etc/systemd/system/llamacpp.service
 # Update these lines:
 #   - Replace YOUR_API_KEY_HERE with your generated key
-#   - Adjust model path
+#   - Replace the * in model path with actual snapshot hash
 #   - Modify --n-cpu-moe if using MoE model
 ```
+
+> **Important:** Systemd doesn't expand shell wildcards (`*`) in ExecStart. You must replace `snapshots/*/` with the actual hash directory.
 
 ### 6. Enable and start
 
@@ -108,6 +110,8 @@ sudo systemctl status llamacpp.service
 ## Monitoring
 
 ### View logs
+
+No log file is needed — systemd automatically captures all stdout/stderr output and forwards it to **journald** (the system journal). This is preferable to a log file: journald handles rotation automatically, logs survive if the service crashes before flushing, and you get structured querying by time, boot, and priority.
 
 ```bash
 # Follow logs in real-time
@@ -136,6 +140,9 @@ sudo systemctl stop llamacpp.service
 # Restart service
 sudo systemctl restart llamacpp.service
 
+# Enable service (will start on boot)
+sudo systemctl enable llamacpp.service
+
 # Disable service (don't start on boot)
 sudo systemctl disable llamacpp.service
 
@@ -147,13 +154,15 @@ sudo systemctl status llamacpp.service
 
 ### Model-specific settings
 
+> **Note:** Replace `*` with the actual snapshot hash from your `/opt/models/hub/models--*/snapshots/` directory. Systemd doesn't expand wildcards.
+
 **GPT-OSS-120B** (120B MoE):
 ```bash
 ExecStart=/opt/llama.cpp/build/bin/llama-server \
-    -m /opt/models/hub/models--ggml-org--gpt-oss-120b-GGUF/snapshots/*/gpt-oss-120b-mxfp4-00001-of-00003.gguf \
+    -m PATH_TO_MODEL \
     --n-gpu-layers 999 \
     --n-cpu-moe 36 \
-    -c 0 \
+    -c 8192 \
     --flash-attn on \
     --jinja \
     --host 0.0.0.0 \
@@ -166,7 +175,7 @@ ExecStart=/opt/llama.cpp/build/bin/llama-server \
 **GPT-OSS-20B** (21B):
 ```bash
 ExecStart=/opt/llama.cpp/build/bin/llama-server \
-    -m /opt/models/hub/models--ggml-org--gpt-oss-20b-GGUF/snapshots/*/gpt-oss-20b-mxfp4.gguf \
+    -m PATH_TO_MODEL \
     --n-gpu-layers 999 \
     -c 8192 \
     --flash-attn on \
@@ -181,10 +190,10 @@ ExecStart=/opt/llama.cpp/build/bin/llama-server \
 **Qwen3.5-35B-A3B** (35B MoE):
 ```bash
 ExecStart=/opt/llama.cpp/build/bin/llama-server \
-    -m /opt/models/hub/models--noctrex--Qwen3.5-35B-A3B-MXFP4_MOE-GGUF/snapshots/*/Qwen3.5-35B-A3B-MXFP4_MOE_BF16.gguf \
+    -m PATH_TO_MODEL \
     --n-gpu-layers 999 \
     --n-cpu-moe 40 \
-    -c 0 \
+    -c 8192 \
     --flash-attn on \
     --jinja \
     --host 0.0.0.0 \
@@ -193,6 +202,16 @@ ExecStart=/opt/llama.cpp/build/bin/llama-server \
     --metrics \
     --log-timestamps
 ```
+
+### Context length (`-c`)
+
+The `-c` flag sets the maximum context length in tokens (combined prompt + response).
+
+- `-c 8192` — 8K tokens, suitable for most interactive use cases (~2–4 GB KV cache depending on model)
+- `-c 32768` — 32K tokens, for long documents or extended conversations (uses significantly more VRAM)
+- `-c 0` — use the model's maximum supported context length (often 128K+); **avoid this unless you have substantial free VRAM** — it will allocate a KV cache for the full context window at startup, which can exhaust GPU memory and force inference to fall back to CPU
+
+If the server starts but inference is unexpectedly slow with high CPU usage, an oversized context is the most likely cause. Start conservative (`-c 8192`) and increase only if needed.
 
 ### Firewall configuration
 
@@ -273,7 +292,11 @@ sudo journalctl -u llamacpp.service -n 50
 ```
 
 Common issues:
-- **Model file not found**: Verify path in ExecStart
+- **Model file not found**: Systemd doesn't expand wildcards (`*`). Find the actual snapshot hash:
+  ```bash
+  sudo ls /opt/models/hub/models--ggml-org--gpt-oss-20b-GGUF/snapshots/
+  ```
+  Then replace `snapshots/*/` with `snapshots/ACTUAL_HASH/` in the ExecStart line.
 - **Permission denied**: Check ownership with `ls -la /opt/llama.cpp`
 - **CUDA errors**: Ensure NVIDIA drivers are installed (`nvidia-smi`)
 - **Port already in use**: Check if another process is using port 8502
