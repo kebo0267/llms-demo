@@ -10,9 +10,7 @@ This section contains lecture slides covering LLM fundamentals, deployment, and 
 >
 > The Marp extension is pre-installed in the dev container.
 
-## Available lessons
-
-### Lesson 44: State of the art in generative AI
+## Lesson 44: State of the art in generative AI
 
 Overview of the current LLM landscape, model architectures, and foundational concepts.
 
@@ -24,7 +22,7 @@ Overview of the current LLM landscape, model architectures, and foundational con
 
 **Location:** `slides/lesson_44_state_of_the_art.md`
 
-### Lesson 45: LLM deployment
+## Lesson 45: LLM deployment
 
 Practical approaches to deploying and serving LLMs in production and development environments.
 
@@ -36,7 +34,7 @@ Practical approaches to deploying and serving LLMs in production and development
 
 **Location:** `slides/lesson_45_llm_deployment.md`
 
-### Lesson 46: Prompting fundamentals
+## Lesson 46: Prompting fundamentals
 
 Introduction to prompt engineering and basic techniques for effective LLM interaction.
 
@@ -48,7 +46,7 @@ Introduction to prompt engineering and basic techniques for effective LLM intera
 
 **Location:** `slides/lesson_46_prompting_fundamentals.md`
 
-### Lesson 47: Advanced prompting
+## Lesson 47: Advanced prompting
 
 Advanced techniques for complex tasks and improving model outputs.
 

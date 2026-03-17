@@ -1,10 +1,10 @@
 # Demos
 
-This repository includes five chatbot demos that demonstrate different approaches to local LLM inference. Each demo covers specific concepts and tools:
+This repository includes five chatbot demos that demonstrate different approaches to local LLM inference. Each demo covers specific concepts and tools.
 
-## Demo overview
+## Demo 1: Ollama chatbot
 
-### 1. Ollama chatbot (`src/ollama_chatbot.py`)
+**File:** `src/ollama_chatbot.py`
 
 **Concepts covered:**
 - Using a local inference server (Ollama)
@@ -16,61 +16,7 @@ This repository includes five chatbot demos that demonstrate different approache
 - [Ollama](inference_servers.md) - Local inference server
 - [LangChain](libraries.md) - LLM application framework
 
-### 2. llama.cpp chatbot (`src/llamacpp_chatbot.py`)
-
-**Concepts covered:**
-- Running large MoE models (120B+ parameters) on consumer hardware
-- CPU/GPU memory split for expert layers
-- OpenAI-compatible API usage
-- Remote vs. local inference servers
-
-**Tools used:**
-- [llama.cpp](inference_servers.md) - High-performance C++ inference engine
-- OpenAI Python client - Standard API interface
-
-### 3. Gradio chatbot (`src/gradio_chatbot.py`)
-
-**Concepts covered:**
-- Web-based chat interfaces
-- Multi-backend architecture (switching between Ollama/llama.cpp)
-- System prompt customization
-- Error handling and user feedback
-
-**Tools used:**
-- [Gradio](libraries.md) - Rapid UI prototyping
-- [LangChain](libraries.md) - LLM orchestration
-- [Ollama](inference_servers.md) - Default backend
-
-### 4. HuggingFace chatbot (`src/huggingface_chatbot.py`)
-
-**Concepts covered:**
-- Direct model loading (no inference server)
-- Chat templates and tokenization
-- Generation parameters (temperature, max tokens)
-- Decoding and response formatting
-
-**Tools used:**
-- [HuggingFace Transformers](libraries.md) - Model loading and inference
-- PyTorch - Underlying tensor operations
-
-### 5. ReAct agent chatbot (`src/react_agent_chatbot.py`)
-
-**Concepts covered:**
-- ReAct (Reasoning + Acting) agent pattern
-- Multi-step reasoning with tool use
-- Tool selection and execution
-- Agent iteration loops and error handling
-
-**Tools used:**
-- [LangChain](libraries.md) - Agent framework and tool integration
-- [Ollama](inference_servers.md) or [llama.cpp](inference_servers.md) - Backend LLM
-- [Gradio](libraries.md) - Web interface with reasoning visualization
-
----
-
-## Running the demos
-
-### Ollama chatbot
+**Running the demo:**
 
 ```bash
 # 1. Start the Ollama server in a terminal
@@ -83,7 +29,21 @@ ollama pull qwen2.5:3b
 python src/ollama_chatbot.py
 ```
 
-### llama.cpp chatbot
+## Demo 2: llama.cpp chatbot
+
+**File:** `src/llamacpp_chatbot.py`
+
+**Concepts covered:**
+- Running large MoE models (120B+ parameters) on consumer hardware
+- CPU/GPU memory split for expert layers
+- OpenAI-compatible API usage
+- Remote vs. local inference servers
+
+**Tools used:**
+- [llama.cpp](inference_servers.md) - High-performance C++ inference engine
+- OpenAI Python client - Standard API interface
+
+**Running the demo:**
 
 You have two choices: use the hosted model at `gpt.perdrizet.org`, or run llama.cpp locally.
 
@@ -122,7 +82,22 @@ python src/llamacpp_chatbot.py
 
 > **Note**: For localhost, the defaults work automatically (localhost:8502 with "dummy" API key). For remote servers, configure `PERDRIZET_URL` and `PERDRIZET_API_KEY` in your `.env` file.
 
-### Gradio chatbot
+## Demo 3: Gradio chatbot
+
+**File:** `src/gradio_chatbot.py`
+
+**Concepts covered:**
+- Web-based chat interfaces
+- Multi-backend architecture (switching between Ollama/llama.cpp)
+- System prompt customization
+- Error handling and user feedback
+
+**Tools used:**
+- [Gradio](libraries.md) - Rapid UI prototyping
+- [LangChain](libraries.md) - LLM orchestration
+- [Ollama](inference_servers.md) - Default backend
+
+**Running the demo:**
 
 ```bash
 # 1. Start the Ollama server in a terminal
@@ -137,7 +112,21 @@ python src/gradio_chatbot.py
 # 4. Open the URL shown in the terminal (usually http://127.0.0.1:7860)
 ```
 
-### HuggingFace chatbot
+## Demo 4: HuggingFace chatbot
+
+**File:** `src/huggingface_chatbot.py`
+
+**Concepts covered:**
+- Direct model loading (no inference server)
+- Chat templates and tokenization
+- Generation parameters (temperature, max tokens)
+- Decoding and response formatting
+
+**Tools used:**
+- [HuggingFace Transformers](libraries.md) - Model loading and inference
+- PyTorch - Underlying tensor operations
+
+**Running the demo:**
 
 ```bash
 # 1. Run the chatbot (downloads model on first run)
@@ -147,7 +136,22 @@ python src/huggingface_chatbot.py
 # First run will download approximately 6GB of model files to models/hugging_face/
 ```
 
-### ReAct agent chatbot
+## Demo 5: ReAct agent chatbot
+
+**File:** `src/react_agent_chatbot.py`
+
+**Concepts covered:**
+- ReAct (Reasoning + Acting) agent pattern
+- Multi-step reasoning with tool use
+- Tool selection and execution
+- Agent iteration loops and error handling
+
+**Tools used:**
+- [LangChain](libraries.md) - Agent framework and tool integration
+- [Ollama](inference_servers.md) or [llama.cpp](inference_servers.md) - Backend LLM
+- [Gradio](libraries.md) - Web interface with reasoning visualization
+
+**Running the demo:**
 
 ```bash
 # 1. Start the Ollama server in a terminal
