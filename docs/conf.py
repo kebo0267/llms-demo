@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'LLM Chatbots Demo'
+project = 'LLM chatbots demo'
 copyright = '2026'
 author = 'AI/ML Boot Camp'
 release = '1.0'

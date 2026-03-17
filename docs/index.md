@@ -1,4 +1,4 @@
-# llms-demo
+# Home
 
 [![Documentation](https://img.shields.io/badge/docs-github%20pages-blue)](https://gperdrizet.github.io/llms-demo/)
 

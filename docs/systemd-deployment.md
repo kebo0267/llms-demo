@@ -111,7 +111,7 @@ sudo systemctl status llamacpp.service
 
 ### View logs
 
-No log file is needed — systemd automatically captures all stdout/stderr output and forwards it to **journald** (the system journal). This is preferable to a log file: journald handles rotation automatically, logs survive if the service crashes before flushing, and you get structured querying by time, boot, and priority.
+No log file is needed - systemd automatically captures all stdout/stderr output and forwards it to **journald** (the system journal). This is preferable to a log file: journald handles rotation automatically, logs survive if the service crashes before flushing, and you get structured querying by time, boot, and priority.
 
 ```bash
 # Follow logs in real-time
@@ -207,9 +207,9 @@ ExecStart=/opt/llama.cpp/build/bin/llama-server \
 
 The `-c` flag sets the maximum context length in tokens (combined prompt + response).
 
-- `-c 8192` — 8K tokens, suitable for most interactive use cases (~2–4 GB KV cache depending on model)
-- `-c 32768` — 32K tokens, for long documents or extended conversations (uses significantly more VRAM)
-- `-c 0` — use the model's maximum supported context length (often 128K+); **avoid this unless you have substantial free VRAM** — it will allocate a KV cache for the full context window at startup, which can exhaust GPU memory and force inference to fall back to CPU
+- `-c 8192` - 8K tokens, suitable for most interactive use cases (~2-4 GB KV cache depending on model)
+- `-c 32768` - 32K tokens, for long documents or extended conversations (uses significantly more VRAM)
+- `-c 0` - use the model's maximum supported context length (often 128K+); **avoid this unless you have substantial free VRAM** - it will allocate a KV cache for the full context window at startup, which can exhaust GPU memory and force inference to fall back to CPU
 
 If the server starts but inference is unexpectedly slow with high CPU usage, an oversized context is the most likely cause. Start conservative (`-c 8192`) and increase only if needed.
 
