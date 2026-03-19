@@ -34,7 +34,7 @@ This repository provides hands-on examples and learning resources for working wi
 
 ## Documentation
 
-**Complete documentation:** [https://gperdrizet.github.io/llms-demo/](https://gperdrizet.github.io/llms-demo/)
+**Complete documentation:** [https://gperdrizet.github.io/llms-demo](https://gperdrizet.github.io/llms-demo/)
 
 The documentation covers:
 - Setup and installation
