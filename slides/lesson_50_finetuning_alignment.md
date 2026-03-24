@@ -440,9 +440,16 @@ When to fine-tune, and what tools to use
 | Scenario | Recommendation | Reason |
 |---|---|---|
 | **Recent or frequently updated facts** | RAG | Fine-tuning can't keep up with changing data |
-| **Large private knowledge base** | RAG | More scalable than encoding into weights |
+| **Private knowledge base** | RAG | More scalable |
 | **Consistent output format/style** | Fine-tune | Format is a learned behavior, not a retrieval problem |
 | **Domain-specific vocabulary and conventions** | Fine-tune | Terminology shapes how the model reasons |
+
+---
+
+## Fine-tune or RAG?
+
+| Scenario | Recommendation | Reason |
+|---|---|---|
 | **Reducing hallucination on known content** | RAG | Grounding with retrieved text is more reliable |
 | **Faster inference (no retrieval step)** | Fine-tune | Weights hold knowledge; no retrieval at runtime |
 | **Both facts and behavior** | Both | Fine-tune for behavior; RAG for knowledge |
