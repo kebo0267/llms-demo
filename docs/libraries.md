@@ -169,3 +169,107 @@ demo = gr.ChatInterface(
 demo.launch()
 ```
 
+---
+
+## PEFT
+
+Parameter-efficient fine-tuning methods that adapt a pre-trained model by training only a small number of additional parameters, leaving the original weights frozen.
+
+**Links:**
+- [Documentation](https://huggingface.co/docs/peft)
+- [GitHub](https://github.com/huggingface/peft)
+
+### Key classes
+
+| Class | Purpose |
+|-------|---------|
+| `LoraConfig` | Defines LoRA hyperparameters: rank, alpha, target modules |
+| `get_peft_model()` | Wraps a base model with a PEFT adapter |
+| `PeftModel.from_pretrained()` | Loads a saved adapter on top of a base model |
+| `.print_trainable_parameters()` | Shows how many parameters are trainable vs. frozen |
+| `.save_pretrained()` | Saves only the adapter weights (a few MB, not the full model) |
+| `.merge_and_unload()` | Merges the adapter into the base weights and returns a plain model |
+
+### Example usage
+
+```python
+import torch
+from transformers import AutoModelForCausalLM
+from peft import LoraConfig, get_peft_model, TaskType, PeftModel
+
+# Load the base model
+model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-0.5B", dtype=torch.float16)
+
+# Configure LoRA
+lora_config = LoraConfig(
+    task_type=TaskType.CAUSAL_LM,
+    r=8,                              # rank
+    lora_alpha=16,                    # scaling factor
+    target_modules=["q_proj", "v_proj"],
+    lora_dropout=0.05,
+    bias="none",
+)
+
+# Attach the adapter - base model weights are frozen automatically
+peft_model = get_peft_model(model, lora_config)
+peft_model.print_trainable_parameters()
+# trainable params: 786,432 || all params: 494,476,288 || trainable%: 0.1590
+
+# Save only the small adapter
+peft_model.save_pretrained("./my_adapter")
+
+# Later: load adapter on top of the base model
+base = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-0.5B", dtype=torch.float16)
+loaded = PeftModel.from_pretrained(base, "./my_adapter")
+```
+
+---
+
+## TRL
+
+Transformer Reinforcement Learning - a library building on top of HuggingFace Transformers and PEFT to provide trainers for SFT, DPO, PPO, and other alignment methods.
+
+**Links:**
+- [Documentation](https://huggingface.co/docs/trl)
+- [GitHub](https://github.com/huggingface/trl)
+
+### Key classes
+
+| Class | Purpose |
+|-------|---------|
+| `SFTConfig` | Training hyperparameters for supervised fine-tuning |
+| `SFTTrainer` | Trainer subclass for SFT; handles chat template formatting, packing, and PEFT integration |
+
+### Example usage
+
+```python
+from datasets import Dataset
+from trl import SFTConfig, SFTTrainer
+
+# Dataset must have a `text` field with fully-formatted conversations
+examples = [
+    {"text": "<|im_start|>system\nYou are helpful.<|im_end|>\n<|im_start|>user\nHello<|im_end|>\n<|im_start|>assistant\nHi!<|im_end|>\n"},
+    # ... more examples
+]
+dataset = Dataset.from_list(examples)
+
+training_args = SFTConfig(
+    output_dir="./output",
+    num_train_epochs=3,
+    per_device_train_batch_size=2,
+    gradient_accumulation_steps=4,
+    learning_rate=2e-4,
+    fp16=True,
+    max_seq_length=256,
+    report_to="none",
+)
+
+trainer = SFTTrainer(
+    model=peft_model,        # a PEFT-wrapped model from get_peft_model()
+    train_dataset=dataset,
+    args=training_args,
+)
+
+trainer.train()
+```
+

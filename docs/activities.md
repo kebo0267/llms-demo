@@ -125,29 +125,34 @@ Add a new document source to the RAG demo by implementing the `BaseIngestor` int
 **Location:** `activities/activity_5_rag_sources.md`
 
 
-## Activity 6: LoRA fine-tuning
+## Activity 6: LoRA fine-tuning experiment
 
-Use Low Rank Adaptation to fine tune a small qwen model
+Fine-tune a small language model on a custom instruction dataset using LoRA, then compare its behaviour against the original base model.
 
-**Duration:** 45-60 minutes
+**Duration:** 60-90 minutes
 
 **Skills practiced:**
-- Direct loading/prompting models (`transformers`)
-- Creating SFT datasets (ChatML format, `Dataset`)
-- LoRA fine-tuning (`SFTTrainer`)
-- Model evaluation
+- Loading and prompting base models directly with `transformers`
+- Building a small SFT dataset formatted as ChatML
+- Configuring and attaching a LoRA adapter with `peft`
+- Training with `SFTTrainer` from `trl`
+- Comparing base vs. fine-tuned outputs and measuring adapter size
 
 **Prerequisites:**
 - Completed Activities 1-5
 - Python programming experience
-- Understanding of Lesson 50 (Fine-tuning)
-- Familiarity with model prompting and training in general
+- Understanding of Lesson 50 (Fine-tuning, RLHF, and model alignment)
+- Familiarity with the fine-tuning demo (`demos/finetuning/finetuning_demo.py`)
 
 **What you'll do:**
-- Prompt a base model and observe it's behavior
-- Create a small supervised fine-tuning dataset
-- Fine-tune the base model using LoRA
-- Compare the base and fine-tuned models
+- Run test prompts through the base model to record a baseline
+- Write 10-20 `(instruction, response)` pairs in a consistent style of your choosing
+- Format the dataset as ChatML and load it with HuggingFace `datasets`
+- Attach a LoRA adapter (`r=8`, targeting `q_proj`/`v_proj`) and train for ~5 epochs
+- Compare fine-tuned responses to the baseline using the same test prompts
+- Save the adapter, measure its size, and reload it via `PeftModel.from_pretrained()`
+
+**Extension challenges:** rank sweep (r=8/16/32), overfitting demonstration (20 epochs), expanding target modules, and `merge_and_unload()` to export a standalone checkpoint.
 
 **Location:** `activities/activity_6_finetuning.md`
 

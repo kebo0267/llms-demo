@@ -65,12 +65,12 @@ The documentation covers:
 
 ### 3. What happens during container startup
 
-The dev container is based on the `gperdrizet/deeplearning-gpu` image (NVIDIA GPU-enabled). On first creation, the `postCreateCommand` runs automatically and does the following:
+The dev container is based on the `gperdrizet/llms-gpu` image (NVIDIA GPU-enabled). On first creation, the `postCreateCommand` runs automatically and does the following:
 
 | Step | What it does |
 |------|-------------|
 | `mkdir -p models/hugging_face && mkdir -p models/ollama` | Creates local directories for model storage |
-| `pip install -r requirements.txt` | Installs Python dependencies: **gradio**, **huggingface-hub**, **langchain-ollama**, **openai**, **python-dotenv**, **torch**, **transformers** |
+| `pip install -r requirements.txt` | Installs Python dependencies: **gradio**, **huggingface-hub**, **langchain-ollama**, **openai**, **peft**, **python-dotenv**, **trl**, **torch**, **transformers** |
 | `bash .devcontainer/install_ollama.sh` | Downloads and installs the Ollama CLI |
 
 The container also pre-configures the following:

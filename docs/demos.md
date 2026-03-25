@@ -307,3 +307,38 @@ python demos/rag_system/rag_demo.py
 - Ingest the same topic twice to see deduplication behaviour
 - Ask a question about something *not* ingested - notice how the grounded answer differs from a hallucinated one
 - Switch backends (Ollama vs. llama.cpp) to compare answer quality
+
+## Demo 8: Fine-tuning and alignment demo
+
+**File:** `demos/finetuning/finetuning_demo.py`
+
+**Concepts covered:**
+- Behavioral difference between a base model and its instruction-tuned counterpart
+- How the chat template links fine-tuning format to inference format
+- What SFT and DPO training data actually looks like (Alpaca JSON, ChatML, DPO preference pairs)
+
+**Tools used:**
+- [HuggingFace Transformers](libraries.md) - Direct model loading for both base and instruct checkpoints
+- [PEFT](libraries.md) / [TRL](libraries.md) - Referenced in the companion activity
+- [Gradio](libraries.md) - Two-tab interactive interface
+
+**Running the demo:**
+
+```bash
+# Models are downloaded from HuggingFace on first run (~500 MB each).
+# Set HF_HOME to control the cache directory.
+
+python demos/finetuning/finetuning_demo.py
+
+# Open the URL shown in the terminal (usually http://127.0.0.1:7860)
+```
+
+**Two tabs:**
+
+1. **Model comparison**: The same prompt is sent to `Qwen/Qwen2.5-0.5B` (base, raw text completion) and `Qwen/Qwen2.5-0.5B-Instruct` (instruction-tuned, chat template) simultaneously - responses shown side by side
+2. **Dataset formatter**: Enter an instruction and ideal output; see it formatted as Alpaca JSON, ChatML, and DPO preference pairs
+
+**What to observe:**
+- On the **completion trap** prompt (`Things I need from the grocery store: 1. Milk 2. Eggs 3.`) - the base model continues the list; the instruct model responds to the intent
+- The **Sources** column in the model table shows the actual HuggingFace checkpoint IDs - these are genuinely different weight files, not aliases
+- The **chat template** in Tab 2 shows exactly the format the instruct model was trained on: `<|im_start|>system ... <|im_end|>` tokens are what distinguishes the two checkpoints at the data level
